@@ -126,8 +126,7 @@ async function sendCatalogButton(to) {
         Authorization: `Bearer ${TOKEN}`,
         "Content-Type": "application/json",
       },
-    }
-  );
+    }a
 }
 
 app.listen(3000, () => console.log("Bot corriendo en http://localhost:3000"));
