@@ -5,13 +5,10 @@ const axios = require("axios");
 const app = express();
 app.use(bodyParser.json());
 
-// ⚠️ Token nuevo (luego pasarlo a variables de entorno en Render)
-const TOKEN =
-  "EAAWWIDWwrGEBQL19Tva3ZBuc9UvCf4REjPtnYOUv91ZB6Yqh7xQw8BX3mpabTrtXxgFAmMptlrW21emhJh4E8xGRpd1c6ktHqzvYunmfiVUNnnx6NbaZCTNhZBt8edRSz3EmQJS61VASKKcfRenZAYeP91nZCvlZB0ItlZBjnXM0sy5fvNZCzNegY2WC9sJ8VQoRCb8b6IfmxhnMtmX3nlWm7EBiqAWVpE36Tw7F793vgakawhzl8E3UBBVhfyQWWAu4ZAX8nZCuh20Jx2K3ZBQZCP0KY0ZC3e";
-
+// TOKEN
+const TOKEN = "TU_TOKEN_AQUI";
 const PHONE_NUMBER_ID = "797396630134831";
 const VERIFY_TOKEN = "botjunior";
-
 
 // =====================================================
 // WEBHOOK VERIFICACIÓN
@@ -28,9 +25,8 @@ app.get("/webhook", (req, res) => {
   }
 });
 
-
 // =====================================================
-// WEBHOOK DE MENSAJES (BOT)
+// WEBHOOK DE MENSAJES
 // =====================================================
 app.post("/webhook", async (req, res) => {
   try {
@@ -38,76 +34,81 @@ app.post("/webhook", async (req, res) => {
     const message = entry?.messages?.[0];
     const from = message?.from;
 
-    // 🟦 BOTÓN DEL MENÚ PRESIONADO
-    if (message?.interactive?.button_reply?.id) {
-      const btn = message.interactive.button_reply.id;
+    if (!message || !from) return res.sendStatus(200);
 
-      if (btn === "catalogo_btn") {
-        await sendText(from, "📘 Catálogo oficial:\nhttps://www.tambo.pe/pedir");
-      }
-
-      if (btn === "promos_btn") {
-        await sendText(
-          from,
-          "🔥 Promociones:\nhttps://www.tambo.pe/pedir/categoria/DmkRzCMmpx97sxReq"
-        );
-      }
-
-      if (btn === "ubicaciones_btn") {
-        await sendText(
-          from,
-          "📍 Encuentra tu Tambo+ más cercano:\nhttps://www.tambo.pe/locales/"
-        );
-      }
-
-      if (btn === "asesor_btn") {
-        await sendText(
-          from,
-          "💬 Un asesor se comunicará contigo pronto. ¡Gracias por tu paciencia! 🙏"
-        );
-      }
-
-      return res.sendStatus(200);
-    }
-
-    // 🟩 MENSAJES DE TEXTO
-    if (message?.text) {
+    // MENSAJE DE TEXTO
+    if (message.text) {
       const msg = message.text.body.toLowerCase();
       console.log("Mensaje recibido:", msg);
 
-      // 1️⃣ BIENVENIDA
+      // BIENVENIDA
       if (["hola", "buenas", "hi"].includes(msg)) {
         await sendText(
           from,
-          "Hola 👋, bienvenido al *Bot de Tambo+*. ¿En qué puedo ayudarle?"
+          "Hola 👋, bienvenido al *Bot de Tambo*. ¿En qué puedo ayudarlo?\n\n" +
+          "Escriba una opción:\n" +
+          "👉 *catalogo*\n" +
+          "👉 *promos*\n" +
+          "👉 *ubicaciones*\n" +
+          "👉 *asesor*"
         );
-        await sendMenu(from);
         return res.sendStatus(200);
       }
 
-      // 2️⃣ MOSTRAR MENÚ
-      if (msg.includes("menu") || msg.includes("opciones") || msg.includes("tambo")) {
-        await sendMenu(from);
+      // CATÁLOGO
+      if (msg.includes("catalogo")) {
+        await sendText(
+          from,
+          "📘 *Catálogo Tambo+*\nHaz tu pedido aquí 👇\nhttps://www.tambo.pe/pedir"
+        );
         return res.sendStatus(200);
       }
 
-      // 3️⃣ MENSAJE DESCONOCIDO
+      // PROMOCIONES
+      if (msg.includes("promos") || msg.includes("promoción") || msg.includes("promociones")) {
+        await sendText(
+          from,
+          "🔥 *Promociones Tambo+* 🔥\nDisponible aquí 👇\nhttps://www.tambo.pe/pedir/categoria/DmkRzCMmpx97sxReq"
+        );
+        return res.sendStatus(200);
+      }
+
+      // UBICACIONES
+      if (msg.includes("ubicaciones") || msg.includes("locales")) {
+        await sendText(
+          from,
+          "📍 *Encuentra tu Tambo+ más cercano:* \nhttps://www.tambo.pe/locales/"
+        );
+        return res.sendStatus(200);
+      }
+
+      // ASESOR
+      if (msg.includes("asesor")) {
+        await sendText(
+          from,
+          "💬 Un asesor se comunicará contigo pronto. Gracias por tu paciencia 🙏"
+        );
+        return res.sendStatus(200);
+      }
+
+      // MENSAJE DESCONOCIDO
       await sendText(
         from,
-        "No entendí 😅\nEscriba *algo* o *menu* para ver las opciones disponibles."
+        "No entendí 😅\nEscriba *hola* o una de estas opciones:\n" +
+        "catalogo / promos / ubicaciones / asesor"
       );
     }
 
     res.sendStatus(200);
+
   } catch (error) {
     console.log("Error:", error);
     res.sendStatus(500);
   }
 });
 
-
 // =====================================================
-// FUNCIÓN: ENVIAR TEXTO (API V24)
+// FUNCIÓN ENVIAR TEXTO
 // =====================================================
 async function sendText(to, text) {
   await axios.post(
@@ -127,59 +128,7 @@ async function sendText(to, text) {
   );
 }
 
-
 // =====================================================
-// FUNCIÓN: MENÚ PRINCIPAL CON BOTONES (API V24)
+// INICIAR SERVIDOR
 // =====================================================
-async function sendMenu(to) {
-  await axios.post(
-    `https://graph.facebook.com/v24.0/${PHONE_NUMBER_ID}/messages`,
-    {
-      messaging_product: "whatsapp",
-      to,
-      type: "interactive",
-      interactive: {
-        type: "button",
-        body: {
-          text: "Seleccione una opción del *Menú Tambo+* 🟦"
-        },
-        action: {
-          buttons: [
-            {
-              type: "reply",
-              reply: { id: "catalogo_btn", title: "📘 Catálogo" }
-            },
-            {
-              type: "reply",
-              reply: { id: "promos_btn", title: "🔥 Promociones" }
-            },
-            {
-              type: "reply",
-              reply: { id: "ubicaciones_btn", title: "📍 Ubicaciones" }
-            },
-            {
-              type: "reply",
-              reply: { id: "asesor_btn", title: "💬 Asesor" }
-            }
-          ]
-        }
-      }
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${TOKEN}`,
-        "Content-Type": "application/json",
-      }
-    }
-  );
-}
-
-
-// =====================================================
-// INICIAR SERVIDOR (RENDER FIX)
-// =====================================================
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  console.log(`Bot corriendo correctamente en puerto ${PORT}`);
-});
+app.listen(3000, () => console.log("Bot corriendo en http://localhost:3000"));
