@@ -12,7 +12,6 @@ const TOKEN =
 const PHONE_NUMBER_ID = "797396630134831";
 const VERIFY_TOKEN = "botjunior";
 
-
 // =====================================================
 // WEBHOOK VERIFICACIÓN
 // =====================================================
@@ -28,7 +27,6 @@ app.get("/webhook", (req, res) => {
   }
 });
 
-
 // =====================================================
 // WEBHOOK DE MENSAJES
 // =====================================================
@@ -38,7 +36,7 @@ app.post("/webhook", async (req, res) => {
     const message = entry?.messages?.[0];
     const from = message?.from;
 
-    // 🟦 CLICK EN BOTONES DEL MENÚ
+    // 🟦 BOTONES PRESIONADOS
     if (message?.interactive?.button_reply?.id) {
       const btn = message.interactive.button_reply.id;
 
@@ -59,7 +57,7 @@ app.post("/webhook", async (req, res) => {
       if (btn === "ubicaciones_btn") {
         await sendText(
           from,
-          "📍 *Encuentra tu Tambo+ más cercano:*\n👉 https://www.tambo.pe/locales/?srsltid=AfmBOoqTQ"
+          "📍 *Encuentra tu Tambo+ más cercano:*\n👉 https://www.tambo.pe/locales/"
         );
       }
 
@@ -82,7 +80,7 @@ app.post("/webhook", async (req, res) => {
       if (["hola", "buenas", "hi"].includes(msg)) {
         await sendText(
           from,
-          "Hola 👋, bienvenido al *Bot de Tambo+*."
+          "Hola 👋, bienvenido al *Bot de Tambo*. ¿En qué puedo ayudarlo?"
         );
         await sendMenu(from);
         return res.sendStatus(200);
@@ -94,10 +92,10 @@ app.post("/webhook", async (req, res) => {
         return res.sendStatus(200);
       }
 
-      // 3️⃣ MENSAJE POR DEFECTO
+      // 3️⃣ DESCONOCIDO
       await sendText(
         from,
-        "No entendí 😅\nEscriba *una letra* o *menu* para ver las opciones disponibles."
+        "No entendí 😅\nEscriba *hola* o *menu* para ver las opciones disponibles."
       );
     }
 
@@ -108,13 +106,12 @@ app.post("/webhook", async (req, res) => {
   }
 });
 
-
 // =====================================================
 // FUNCIÓN: ENVIAR TEXTO
 // =====================================================
 async function sendText(to, text) {
   await axios.post(
-    `https://graph.facebook.com/v17.0/${PHONE_NUMBER_ID}/messages`,
+    `https://graph.facebook.com/v24.0/${PHONE_NUMBER_ID}/messages`,
     {
       messaging_product: "whatsapp",
       to,
@@ -130,69 +127,6 @@ async function sendText(to, text) {
   );
 }
 
-
 // =====================================================
-// FUNCIÓN: MENÚ PRINCIPAL CON BOTONES
-// =====================================================
-async function sendMenu(to) {
-  await axios.post(
-    `https://graph.facebook.com/v17.0/${PHONE_NUMBER_ID}/messages`,
-    {
-      messaging_product: "whatsapp",
-      to,
-      type: "interactive",
-      interactive: {
-        type: "button",
-        body: {
-          text: "Seleccione una opción del *Menú Tambo+* 🟦"
-        },
-        action: {
-          buttons: [
-            {
-              type: "reply",
-              reply: {
-                id: "catalogo_btn",
-                title: "📘 Catálogo"
-              }
-            },
-            {
-              type: "reply",
-              reply: {
-                id: "promos_btn",
-                title: "🔥 Promociones"
-              }
-            },
-            {
-              type: "reply",
-              reply: {
-                id: "ubicaciones_btn",
-                title: "📍 Ubicaciones"
-              }
-            },
-            {
-              type: "reply",
-              reply: {
-                id: "asesor_btn",
-                title: "💬 Hablar con asesor"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${TOKEN}`,
-        "Content-Type": "application/json",
-      }
-    }
-  );
-}
-
-
-// =====================================================
-// INICIAR SERVIDOR
-// =====================================================
-app.listen(3000, () =>
-  console.log("Bot corriendo en http://localhost:3000")
-);
+// FUNCIÓN: MENÚ PRINCIPAL
+// ===================================
