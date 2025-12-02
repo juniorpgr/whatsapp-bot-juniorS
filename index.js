@@ -125,7 +125,7 @@ async function sendText(to, text) {
       },
     }
   );
-}
+}s
 
 // =====================================================
 // FUNCIÓN: MENÚ PRINCIPAL
