@@ -94,7 +94,7 @@ app.post("/webhook", async (req, res) => {
       // 3️⃣ MENSAJE DESCONOCIDO
       await sendText(
         from,
-        "No entendí 😅\nEscriba *hola* o *menu* para ver las opciones disponibles."
+        "No entendí 😅\nEscriba *algo* o *menu* para ver las opciones disponibles."
       );
     }
 
