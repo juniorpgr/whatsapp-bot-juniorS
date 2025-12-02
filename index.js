@@ -97,7 +97,7 @@ app.post("/webhook", async (req, res) => {
       // 3️⃣ MENSAJE POR DEFECTO
       await sendText(
         from,
-        "No entendí 😅\nEscriba *hola* o *menu* para ver las opciones disponibles."
+        "No entendí 😅\nEscriba *una letra* o *menu* para ver las opciones disponibles."
       );
     }
 
