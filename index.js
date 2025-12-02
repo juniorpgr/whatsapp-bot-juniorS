@@ -59,7 +59,7 @@ app.post("/webhook", async (req, res) => {
       // 3️⃣ RESPUESTA POR DEFECTO
       await sendText(
         from,
-        "No entendí bien 😅\nEscriba Algo para poder ayudarlo por favors."
+        "No entendí bien 😅\nEscriba Algo para poder ayudarlo por favor."
       );
     }
 
@@ -94,7 +94,7 @@ async function sendText(to, text) {
 
 
 // =====================================================
-// BOTÓN DEL CATÁLOGO
+// BOTÓN DEL CATÁLOGO (CORREGIDO)
 // =====================================================
 async function sendCatalogButton(to) {
   await axios.post(
@@ -109,21 +109,21 @@ async function sendCatalogButton(to) {
         action: {
           buttons: [
             {
-              type: "url",
-              url: {
-                link: "https://www.tambo.pe/pedir",
-                text: "📘 Ver Catálogo",
-              },
-            },
-          ],
-        },
-      },
+              type: "cta_url",
+              cta_url: {
+                url: "https://www.tambo.pe/pedir",
+                title: "📘 Ver Catálogo"
+              }
+            }
+          ]
+        }
+      }
     },
     {
       headers: {
         Authorization: `Bearer ${TOKEN}`,
         "Content-Type": "application/json",
-      },
+      }
     }
   );
 }
