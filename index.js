@@ -5,7 +5,7 @@ const axios = require("axios");
 const app = express();
 app.use(bodyParser.json());
 
-const TOKEN = "EAAWWIDWwrGEBQGvhdUdZCXfydwpD7hF9xdZCuoqd1je0Xd7SOAzP8ZBqwoWnYAiymzBlsl4w3JD9DfAZAmVBatxUh4vCjT36I2bHZAHpeQMn5p6T8PyhqMKBS8w4G1OFs2zFZAKbCTM1DZBhFAehxYaAHfXh7gWjC4qfDJU7FTofWpJpUFz5zWfvGmZAbz8ptnHRdUTHOWstmT0z4fvexIxd7l3Jafm1wSrqAtkZBwbSAiRDpAbqE9i30nJFURZBnBsTbtZByvLDh6z07oRUjW6wCrSdihA";
+const TOKEN = "EAAWWIDWwrGEBQCN7OyVgAzRtAJxbdD9qYMtBt83cC4d8Dp1mtzt1kiv8QMH8LyWsyASkm1Xj6A6NRoUDJnpKtIGZBaJU89VCHZBZCgnPrlKDNmV1LTxcZBTzQObw2dQaKFDhHma7h1k0qu9RJ2lF4TWJAVhI5vgPC7EEzj9ObyGJvNjseB9296YxR9ZBP6IoRYhOUFVEF3xfzOoIRtZCoFcaOcqqvZAHadwBTG5w3Pc8P3rtsahP7OtyAyvZANWYsv4PBueTV0QvpFhVlspeLRFaDizv";
 const PHONE_NUMBER_ID = "797396630134831";
 const VERIFY_TOKEN = "botjunior";
 
