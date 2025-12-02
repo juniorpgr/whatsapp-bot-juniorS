@@ -5,8 +5,10 @@ const axios = require("axios");
 const app = express();
 app.use(bodyParser.json());
 
-// ⚠️ Luego lo pasamos a variables de entorno
-const TOKEN = "EAAWWIDWwrGEBQL19Tva3ZBuc9UvCf4REjPtnYOUv91ZB6Yqh7xQw8BX3mpabTrtXxgFAmMptlrW21emhJh4E8xGRpd1c6ktHqzvYunmfiVUNnnx6NbaZCTNhZBt8edRSz3EmQJS61VASKKcfRenZAYeP91nZCvlZB0ItlZBjnXM0sy5fvNZCzNegY2WC9sJ8VQoRCb8b6IfmxhnMtmX3nlWm7EBiqAWVpE36Tw7F793vgakawhzl8E3UBBVhfyQWWAu4ZAX8nZCuh20Jx2K3ZBQZCP0KY0ZC3e";
+// ⚠️ Token nuevo
+const TOKEN =
+  "EAAWWIDWwrGEBQL19Tva3ZBuc9UvCf4REjPtnYOUv91ZB6Yqh7xQw8BX3mpabTrtXxgFAmMptlrW21emhJh4E8xGRpd1c6ktHqzvYunmfiVUNnnx6NbaZCTNhZBt8edRSz3EmQJS61VASKKcfRenZAYeP91nZCvlZB0ItlZBjnXM0sy5fvNZCzNegY2WC9sJ8VQoRCb8b6IfmxhnMtmX3nlWm7EBiqAWVpE36Tw7F793vgakawhzl8E3UBBVhfyQWWAu4ZAX8nZCuh20Jx2K3ZBQZCP0KY0ZC3e";
+
 const PHONE_NUMBER_ID = "797396630134831";
 const VERIFY_TOKEN = "botjunior";
 
@@ -34,19 +36,44 @@ app.post("/webhook", async (req, res) => {
   try {
     const entry = req.body.entry?.[0]?.changes?.[0]?.value;
     const message = entry?.messages?.[0];
-
     const from = message?.from;
 
-    // 🟦 CAPTURAR CLICK EN BOTÓN (reply button)
-    if (message?.interactive?.button_reply?.id === "catalogo_btn") {
-      await sendText(
-        from,
-        "📘 Aquí tienes el catálogo oficial de Tambo+ 👇\nhttps://www.tambo.pe/pedir"
-      );
+    // 🟦 CLICK EN BOTONES DEL MENÚ
+    if (message?.interactive?.button_reply?.id) {
+      const btn = message.interactive.button_reply.id;
+
+      if (btn === "catalogo_btn") {
+        await sendText(
+          from,
+          "📘 Aquí tienes el catálogo oficial de Tambo+ 👇\nhttps://www.tambo.pe/pedir"
+        );
+      }
+
+      if (btn === "promos_btn") {
+        await sendText(
+          from,
+          "🔥 *Promociones Tambo+* 🔥\n👉 https://www.tambo.pe/pedir/categoria/DmkRzCMmpx97sxReq"
+        );
+      }
+
+      if (btn === "ubicaciones_btn") {
+        await sendText(
+          from,
+          "📍 *Encuentra tu Tambo+ más cercano:*\n👉 https://www.tambo.pe/locales/?srsltid=AfmBOoqTQ"
+        );
+      }
+
+      if (btn === "asesor_btn") {
+        await sendText(
+          from,
+          "💬 Un asesor se comunicará contigo pronto. Gracias por su paciencia 🙏"
+        );
+      }
+
       return res.sendStatus(200);
     }
 
-    // 🟩 CAPTURAR MENSAJES DE TEXTO
+    // 🟩 MENSAJES DE TEXTO
     if (message && message.text) {
       const msg = message.text.body.toLowerCase();
       console.log("Mensaje recibido:", msg);
@@ -55,21 +82,22 @@ app.post("/webhook", async (req, res) => {
       if (["hola", "buenas", "hi"].includes(msg)) {
         await sendText(
           from,
-          "Hola 👋, bienvenido al *Bot de Tambo+*. ¿En qué puedo ayudarlo?"
+          "Hola 👋, bienvenido al *Bot de Tambo+*."
         );
+        await sendMenu(from);
         return res.sendStatus(200);
       }
 
-      // 2️⃣ CATÁLOGO (envía botón)
-      if (msg.includes("catalogo") || msg.includes("catálogo")) {
-        await sendCatalogButton(from);
+      // 2️⃣ MOSTRAR MENÚ
+      if (msg.includes("menu") || msg.includes("opciones") || msg.includes("tambo")) {
+        await sendMenu(from);
         return res.sendStatus(200);
       }
 
       // 3️⃣ MENSAJE POR DEFECTO
       await sendText(
         from,
-        "No entendí bien 😅\nEscriba *hola* o *catalogo* para ver opciones."
+        "No entendí 😅\nEscriba *hola* o *menu* para ver las opciones disponibles."
       );
     }
 
@@ -104,10 +132,9 @@ async function sendText(to, text) {
 
 
 // =====================================================
-// FUNCIÓN: BOTÓN CATÁLOGO (REPLY BUTTON)
-// COMPATIBLE CON TODAS LAS CUENTAS
+// FUNCIÓN: MENÚ PRINCIPAL CON BOTONES
 // =====================================================
-async function sendCatalogButton(to) {
+async function sendMenu(to) {
   await axios.post(
     `https://graph.facebook.com/v17.0/${PHONE_NUMBER_ID}/messages`,
     {
@@ -116,14 +143,37 @@ async function sendCatalogButton(to) {
       type: "interactive",
       interactive: {
         type: "button",
-        body: { text: "Haz clic para abrir el catálogo 👇" },
+        body: {
+          text: "Seleccione una opción del *Menú Tambo+* 🟦"
+        },
         action: {
           buttons: [
             {
               type: "reply",
               reply: {
                 id: "catalogo_btn",
-                title: "📘 Ver Catálogo"
+                title: "📘 Catálogo"
+              }
+            },
+            {
+              type: "reply",
+              reply: {
+                id: "promos_btn",
+                title: "🔥 Promociones"
+              }
+            },
+            {
+              type: "reply",
+              reply: {
+                id: "ubicaciones_btn",
+                title: "📍 Ubicaciones"
+              }
+            },
+            {
+              type: "reply",
+              reply: {
+                id: "asesor_btn",
+                title: "💬 Hablar con asesor"
               }
             }
           ]
