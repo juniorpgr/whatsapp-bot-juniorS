@@ -59,7 +59,7 @@ app.post("/webhook", async (req, res) => {
       // 3️⃣ RESPUESTA POR DEFECTO
       await sendText(
         from,
-        "No entendí bien 😅\nEscriba Algo para poder ayudarlo por favor."
+        "No entendí bien 😅\nEscriba Algo para poder ayudarlo por favor se lo pido."
       );
     }
 
