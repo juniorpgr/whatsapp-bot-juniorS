@@ -32,7 +32,7 @@ app.post("/webhook", async (req, res) => {
       const from = message.from;
       const text = message.text.body.toLowerCase();
 
-      await sendMessage(from, "Hola 👋 soy el bot de Tambo+ en que te puedo ayudar.\nEscribe *PDF* para recibir el documento.");
+      await sendMessage(from, "Hola 👋 soy el bot de Tambo en que te puedo ayudar.\nEscribe *PDF* para recibir el documento.");
     }
 
     res.sendStatus(200);
